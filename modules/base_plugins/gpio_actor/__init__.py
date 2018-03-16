@@ -6,7 +6,7 @@ from modules.core.hardware import ActorBase, SensorPassive, SensorActive
 from modules.core.props import Property
 
 try:
-    import RPi.GPIO as GPIO
+    import OPi.GPIO as GPIO
 
     GPIO.setmode(GPIO.BCM)
 except Exception as e:

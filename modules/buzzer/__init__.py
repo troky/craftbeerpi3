@@ -3,7 +3,7 @@ from thread import start_new_thread
 from modules import cbpi
 
 try:
-    import RPi.GPIO as GPIO
+    import OPi.GPIO as GPIO
 except Exception as e:
     pass
 
