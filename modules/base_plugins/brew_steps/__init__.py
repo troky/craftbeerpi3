@@ -80,7 +80,7 @@ class MashInStep(StepBase):
         Initialize Step. This method is called once at the beginning of the step
         :return:
         '''
-        # set target tep
+        # set target step
         self.s = False
         self.set_target_temp(self.temp, self.kettle)
 
@@ -95,6 +95,7 @@ class MashInStep(StepBase):
         # Check if Target Temp is reached
         if self.get_kettle_temp(self.kettle) >= float(self.temp) and self.s is False:
             self.s = True
+            #DBK_added self.actor_off(1)
             self.notify("Step Temp Reached!", "Please press the next button to continue", timeout=None)
 
 
@@ -104,7 +105,7 @@ class ChilStep(StepBase):
 
     timer = Property.Number("Timer in Minutes", configurable=True, default_value=0, description="Timer is started immediately")
 
-    @cbpi.action("Stat Timer")
+    @cbpi.action("Start Timer")
     def start(self):
         if self.is_timer_finished() is None:
             self.start_timer(int(self.timer) * 60)
@@ -129,17 +130,19 @@ class PumpStep(StepBase):
     pump = StepProperty.Actor("Pump", description="Pump actor gets toogled")
     timer = Property.Number("Timer in Minutes", configurable=True, default_value=0, description="Timer is started immediately")
 
-    @cbpi.action("Stat Timer")
+    @cbpi.action("Start Timer")
     def start(self):
         if self.is_timer_finished() is None:
             self.start_timer(int(self.timer) * 60)
+        #self.start_stopwatch()
 
     def reset(self):
         self.stop_timer()
-
+        #self.stop_stopwatch()
 
     def finish(self):
         self.actor_off(int(self.pump))
+        #self.stop_stopwatch()
 
     def init(self):
         self.actor_on(int(self.pump))

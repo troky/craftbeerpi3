@@ -9,7 +9,7 @@ class Hysteresis(KettleController):
     # Custom Properties
 
     on = Property.Number("Offset On", True, 0, description="Offset below target temp when heater should switched on. Should be bigger then Offset Off")
-    off = Property.Number("Offset Off", True, 0, description="Offset below target temp when heater should switched off. Should be smaller then Offset Off")
+    off = Property.Number("Offset Off", True, 0, description="Offset above target temp when heater should switched off. Should be smaller then Offset On")
 
     def stop(self):
         '''

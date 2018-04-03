@@ -79,6 +79,14 @@ class ActorAPI(object):
         actor.state = 0
         self.emit("SWITCH_ACTOR", actor)
 
+    def toggle_actor(self, id, power=100):
+        actor = self.cache.get("actors").get(id)
+
+        if actor.state == 0:
+	    switch_actor_on(int(id), power)
+	else:
+            switch_actor_off(int(id))
+
 class SensorAPI(object):
 
     def init_sensors(self):
@@ -255,6 +263,13 @@ class CraftBeerPi(ActorAPI, SensorAPI):
 
 
     def add_config_parameter(self, name, value, type, description, options=None):
+        from modules.config import Config
+        with self.app.app_context():
+            c = Config.insert(**{"name":name, "value": value, "type": type, "description": description, "options": options})
+            if self.cache.get("config") is not None:
+                self.cache.get("config")[c.name] = c
+
+    def delete_config_parameter(self, name, value, type, description, options=None):
         from modules.config import Config
         with self.app.app_context():
             c = Config.insert(**{"name":name, "value": value, "type": type, "description": description, "options": options})
@@ -456,7 +471,7 @@ class CraftBeerPi(ActorAPI, SensorAPI):
         self.app.logger.info("Invoke Init")
         self.cache["init"] = sorted(self.cache["init"], key=lambda k: k['order'])
         for i in self.cache.get("init"):
-            self.app.logger.info("INITIALIZER - METHOD %s PAHT %s: " % (i.get("function").__name__, str(inspect.getmodule(i.get("function")).__file__) ))
+            self.app.logger.info("INITIALIZER - METHOD %s PATH %s: " % (i.get("function").__name__, str(inspect.getmodule(i.get("function")).__file__) ))
             i.get("function")(self)
 
 

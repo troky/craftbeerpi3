@@ -1,6 +1,7 @@
 from modules import cbpi
 from modules.core.props import StepProperty, Property
 import time
+import sys
 
 
 class NotificationAPI(object):
@@ -57,13 +58,36 @@ class KettleAPI(NotificationAPI):
 
 class Timer(object):
     timer_end = Property.Number("TIMER_END", configurable=False)
+    stopwatch_started = Property.Number("STOPWATCH_START", configurable=False)
+
+    def start_stopwatch(self):
+        if self.stopwatch_started is not None:
+            return
+        self.stopwatch_started = time.time()
+#        cbpi.app.logger.info("Stopwatch: Started %s" % str(self.stopwatch_started))
+
+    def stop_stopwatch(self):
+        if self.stopwatch_started is not None:
+            end_time = time.time()
+            elapsed_time = str(end_time - self.stopwatch_started)
+            cbpi.app.logger.info("Stopwatch: Stopped, Elapsed Time: %s" % (elapsed_time))
+            self.stopwatch_started = None    
+            return elapsed_time
+        else:
+            return 0
+
+    def is_stopwatch_running(self):
+#        cbpi.app.logger.info("Stopwatch: Running")
+        if self.stopwatch_started is not None:
+            return True
+        else:
+            return False
 
     def start_timer(self, timer):
-
+        cbpi.app.logger.info("Started Timer ...")
         if self.timer_end is not None:
             return
         self.timer_end = int(time.time()) + timer
-
 
     def stop_timer(self):
         if self.timer_end is not None:
